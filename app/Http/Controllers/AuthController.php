@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SignupRequest;
+use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+
 
 class AuthController extends Controller
 {
@@ -14,24 +18,28 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'cadastro']]);
     }
 
-    /**
-     * Get a JWT via given credentials.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+
+    public function cadastro(SignupRequest $request)
+    {
+        User::create($request->all());
+        return $this->login($request);
+    }
+
     public function login()
     {
         $credentials = request(['email', 'password']);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Login ou senha inválidos'], 401);
         }
 
         return $this->respondWithToken($token);
     }
+
+
 
     /**
      * Get the authenticated User.
@@ -81,4 +89,7 @@ class AuthController extends Controller
             'user' => auth()->user()->name
         ]);
     }
+
+
+
 }

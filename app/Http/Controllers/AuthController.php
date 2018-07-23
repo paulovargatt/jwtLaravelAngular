@@ -22,11 +22,7 @@ class AuthController extends Controller
     }
 
 
-    public function cadastro(SignupRequest $request)
-    {
-        User::create($request->all());
-        return $this->login($request);
-    }
+
 
     public function login()
     {
@@ -39,6 +35,11 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
+    public function cadastro(SignupRequest $request)
+    {
+        User::create($request->all());
+        return $this->login($request);
+    }
 
 
     /**
